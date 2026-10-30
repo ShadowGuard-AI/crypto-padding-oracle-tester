@@ -1,3 +1,5 @@
+![Banner](banner.png)
+
 # crypto-padding-oracle-tester
 A tool to test a web server or cryptographic implementation for padding oracle vulnerabilities in CBC mode encryption. Sends crafted ciphertext to the server and analyzes the response to identify vulnerabilities. Relies on the `requests` library for HTTP interaction. - Focused on Basic cryptographic operations
 
