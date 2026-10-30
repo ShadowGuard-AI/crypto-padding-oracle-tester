@@ -7,7 +7,11 @@ A tool to test a web server or cryptographic implementation for padding oracle v
 `git clone https://github.com/ShadowStrikeHQ/crypto-padding-oracle-tester`
 
 ## Usage
-`./crypto-padding-oracle-tester [params]`
+```bash
+python3 main.py -u <url> [--test_mode]
+```
+
+`--test_mode` is a dry run: it builds the ciphertext and walks the byte positions without sending any request, so it cannot produce a vulnerability verdict and the run ends by saying so. A live run reports "likely found" only when at least one byte position actually answered like a padding oracle. Invalid keys, IVs, ciphertext, or block sizes exit 1.
 
 ## Parameters
 - `-h`: Show help message and exit

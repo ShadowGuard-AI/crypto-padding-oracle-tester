@@ -4,7 +4,6 @@ import requests
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes
 import os
 import base64
 
@@ -88,6 +87,12 @@ def test_padding_oracle(url, ciphertext, parameter, error_message, block_size, u
     Returns:
         bool: True if a vulnerability is found, False otherwise.
     """
+    # A verdict needs evidence: this used to return True unconditionally
+    # at the end, including in test mode where no request is ever sent,
+    # so every run ended with "vulnerability likely found". It now
+    # returns True only when a live response actually behaved like an
+    # oracle for at least one byte position.
+    found_oracle_byte = False
     num_blocks = len(ciphertext) // block_size
     if len(ciphertext) % block_size != 0:
         logging.error("Ciphertext length is not a multiple of the block size.")
@@ -122,6 +127,7 @@ def test_padding_oracle(url, ciphertext, parameter, error_message, block_size, u
                         logging.debug(f"Block: {block_num}, Byte: {byte_index}, Value: {byte_value}, Result: Padding Error")
                     else:
                         logging.info(f"Block: {block_num}, Byte: {byte_index}, Value: {byte_value}, Result: Success - Potential Padding Oracle")
+                        found_oracle_byte = True
                         # Correct byte found, update current_block with correct padding
                         current_block = bytearray(current_block)
                         current_block[byte_index] = byte_value
@@ -133,7 +139,9 @@ def test_padding_oracle(url, ciphertext, parameter, error_message, block_size, u
             else:
                 logging.warning(f"No valid byte found for Block: {block_num}, Byte: {byte_index}.  Possible false positive.")
 
-    return True
+    if test_mode:
+        logging.info("Test mode: no requests were sent, so no vulnerability verdict is possible.")
+    return found_oracle_byte
 
 
 def main():
@@ -141,6 +149,13 @@ def main():
     Main function to execute the padding oracle tester.
     """
     args = setup_argparse()
+
+    # Block size is validated here, before key and IV generation: with
+    # the check at the bottom, a block size of 0 died inside the cipher
+    # as an uncaught IV length traceback instead of a clean refusal.
+    if args.block_size <= 0:
+        logging.error("Block size must be a positive integer.")
+        return 1
 
     url = args.url
     data = args.data
@@ -159,7 +174,7 @@ def main():
                 raise ValueError("Key length must be 16, 24, or 32 bytes (AES-128, AES-192, AES-256).")
         except ValueError:
             logging.error("Invalid key. Key must be a hex encoded string of length 32, 48, or 64 (16, 24, or 32 bytes).")
-            return
+            return 1
     else:
         key = generate_random_key()
         logging.info(f"Generated random key (hex encoded): {key.hex()}")
@@ -171,7 +186,7 @@ def main():
                 raise ValueError(f"IV length must be {block_size} bytes.")
         except ValueError:
             logging.error(f"Invalid IV. IV must be a hex encoded string of length {block_size * 2} ({block_size} bytes).")
-            return
+            return 1
     else:
         iv = generate_random_iv(block_size)
         logging.info(f"Generated random IV (hex encoded): {iv.hex()}")
@@ -179,10 +194,13 @@ def main():
     # Ciphertext generation or retrieval
     if ciphertext_base64:
         try:
-            ciphertext = base64.b64decode(ciphertext_base64)
-        except ValueError:
+            # validate=True matters: without it b64decode silently drops
+            # characters outside the alphabet, so a garbled value was
+            # tested as if it were a shorter, different ciphertext.
+            ciphertext = base64.b64decode(ciphertext_base64, validate=True)
+        except Exception:
             logging.error("Invalid ciphertext. Ciphertext must be a valid base64 encoded string.")
-            return
+            return 1
     else:
         if not data:
             data = "This is a test message."  # Default message if none is provided
@@ -191,25 +209,24 @@ def main():
         ciphertext_base64 = base64.b64encode(ciphertext).decode('utf-8')
         logging.info(f"Encrypted ciphertext (base64 encoded): {ciphertext_base64}")
 
-    # Input Validation
     if not url:
         logging.error("URL is required.")
-        return
+        return 1
 
-    if block_size <= 0:
-        logging.error("Block size must be a positive integer.")
-        return
-
-    if not isinstance(error_message, str):
-        logging.error("Error message must be a string.")
-        return
-
-    # Run padding oracle test
+    # Run padding oracle test. In test mode the function reports that
+    # no verdict is possible; that is a completed dry run (exit 0), not
+    # a finding, and it must not print the "likely found" line.
+    if test_mode:
+        test_padding_oracle(url, ciphertext, parameter, error_message, block_size, use_get, test_mode)
+        logging.info("Test mode run completed. No requests were sent.")
+        return 0
     if test_padding_oracle(url, ciphertext, parameter, error_message, block_size, use_get, test_mode):
         logging.info("Padding oracle vulnerability likely found.")
     else:
         logging.info("Padding oracle vulnerability not detected, or an error occurred.")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    sys.exit(main())
