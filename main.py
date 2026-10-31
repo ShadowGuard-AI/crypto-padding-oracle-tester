@@ -85,7 +85,10 @@ def test_padding_oracle(url, ciphertext, parameter, error_message, block_size, u
         test_mode (bool): Enable test mode to not send requests to server.
 
     Returns:
-        bool: True if a vulnerability is found, False otherwise.
+        bool or None: True if a vulnerability is found, False if the
+        byte loop completed without oracle evidence, and None when the
+        run errored and no verdict was reached. An error is kept apart
+        from a not found result so main can exit 1 for it.
     """
     # A verdict needs evidence: this used to return True unconditionally
     # at the end, including in test mode where no request is ever sent,
@@ -96,7 +99,33 @@ def test_padding_oracle(url, ciphertext, parameter, error_message, block_size, u
     num_blocks = len(ciphertext) // block_size
     if len(ciphertext) % block_size != 0:
         logging.error("Ciphertext length is not a multiple of the block size.")
-        return False
+        return None
+    if num_blocks < 2:
+        logging.error("Ciphertext must contain at least two blocks to test.")
+        return None
+
+    def send(encoded):
+        if use_get:
+            return requests.get(url, params={parameter: encoded}, timeout=5)
+        return requests.post(url, data={parameter: encoded}, timeout=5)
+
+    if not test_mode:
+        # Baseline: record how the server answers the unmodified
+        # ciphertext before any crafted value is sent. A transport
+        # failure here means the run tested nothing, so it is an
+        # error, not a not detected result. An HTTP error status is
+        # an answer to read, not a failure: the error string is
+        # checked in the body whatever the status is.
+        try:
+            baseline = send(base64.b64encode(ciphertext).decode('utf-8'))
+        except requests.exceptions.RequestException as e:
+            logging.error(f"Request failed: {e}")
+            return None
+        baseline_has_error = error_message in baseline.text
+        logging.info(
+            f"Baseline response: status {baseline.status_code}, "
+            f"padding error text {'present' if baseline_has_error else 'absent'}."
+        )
 
     for block_num in range(num_blocks - 1, 0, -1): # Iterate from the second last to the second block
         block_start = block_num * block_size
@@ -106,7 +135,10 @@ def test_padding_oracle(url, ciphertext, parameter, error_message, block_size, u
         for byte_index in range(block_size - 1, -1, -1):
             padding_value = block_size - byte_index
             modified_block = bytearray(current_block)
-            
+            saw_error = False
+            saw_ok = False
+            first_ok_value = None
+
             for byte_value in range(256):
                 modified_block[byte_index] = byte_value
                 modified_ciphertext = ciphertext[:block_start] + bytes(modified_block) + ciphertext[block_end:]
@@ -117,27 +149,37 @@ def test_padding_oracle(url, ciphertext, parameter, error_message, block_size, u
                     continue
 
                 try:
-                    if use_get:
-                        response = requests.get(url, params={parameter: encoded_ciphertext}, timeout=5)
-                    else:
-                        response = requests.post(url, data={parameter: encoded_ciphertext}, timeout=5)
-                    response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
-
-                    if error_message in response.text:
-                        logging.debug(f"Block: {block_num}, Byte: {byte_index}, Value: {byte_value}, Result: Padding Error")
-                    else:
-                        logging.info(f"Block: {block_num}, Byte: {byte_index}, Value: {byte_value}, Result: Success - Potential Padding Oracle")
-                        found_oracle_byte = True
-                        # Correct byte found, update current_block with correct padding
-                        current_block = bytearray(current_block)
-                        current_block[byte_index] = byte_value
-                        current_block = bytes(current_block)
-                        break  # Move to next byte
+                    response = send(encoded_ciphertext)
                 except requests.exceptions.RequestException as e:
                     logging.error(f"Request failed: {e}")
-                    return False
+                    return None
+
+                if error_message in response.text:
+                    logging.debug(f"Block: {block_num}, Byte: {byte_index}, Value: {byte_value}, Result: Padding Error")
+                    saw_error = True
+                else:
+                    logging.debug(f"Block: {block_num}, Byte: {byte_index}, Value: {byte_value}, Result: No Padding Error")
+                    saw_ok = True
+                    if first_ok_value is None:
+                        first_ok_value = byte_value
+
+                # A position counts as oracle evidence only when the
+                # answers at that position split: at least one byte
+                # value answered without the error string while other
+                # values at the same position answered with it. A
+                # server whose answers never vary with the ciphertext
+                # (every answer the same, with or without the error
+                # string) can never meet this standard.
+                if saw_error and saw_ok:
+                    logging.info(f"Block: {block_num}, Byte: {byte_index}, Value: {first_ok_value}, Result: Answers split at this position - Potential Padding Oracle")
+                    found_oracle_byte = True
+                    # Correct byte found, update current_block with correct padding
+                    current_block = bytearray(current_block)
+                    current_block[byte_index] = first_ok_value
+                    current_block = bytes(current_block)
+                    break  # Move to next byte
             else:
-                logging.warning(f"No valid byte found for Block: {block_num}, Byte: {byte_index}.  Possible false positive.")
+                logging.warning(f"No distinguishing evidence for Block: {block_num}, Byte: {byte_index}. Answers did not split between the error string and its absence.")
 
     if test_mode:
         logging.info("Test mode: no requests were sent, so no vulnerability verdict is possible.")
@@ -220,10 +262,14 @@ def main():
         test_padding_oracle(url, ciphertext, parameter, error_message, block_size, use_get, test_mode)
         logging.info("Test mode run completed. No requests were sent.")
         return 0
-    if test_padding_oracle(url, ciphertext, parameter, error_message, block_size, use_get, test_mode):
+    result = test_padding_oracle(url, ciphertext, parameter, error_message, block_size, use_get, test_mode)
+    if result is None:
+        logging.error("Padding oracle test run failed. No verdict was reached.")
+        return 1
+    if result:
         logging.info("Padding oracle vulnerability likely found.")
     else:
-        logging.info("Padding oracle vulnerability not detected, or an error occurred.")
+        logging.info("Padding oracle vulnerability not detected.")
     return 0
 
 
