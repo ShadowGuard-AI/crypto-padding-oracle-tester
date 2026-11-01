@@ -62,6 +62,11 @@ def cbc_encrypt(data, key, iv):
     Returns:
         bytes: The encrypted ciphertext.
     """
+    # Padding here always uses the AES block size from the library,
+    # never the --block_size flag. That is right for real AES, but it
+    # means a run started with a different --block_size encrypts with
+    # 16 byte padding and then tests in blocks of the other size, and
+    # the two halves disagree without any message saying so.
     padder = padding.PKCS7(algorithms.AES.block_size).padder()
     padded_data = padder.update(data) + padder.finalize()
 
@@ -122,6 +127,10 @@ def test_padding_oracle(url, ciphertext, parameter, error_message, block_size, u
             logging.error(f"Request failed: {e}")
             return None
         baseline_has_error = error_message in baseline.text
+        # The baseline is logged and then never compared against. The
+        # split test below works from the crafted answers alone, so a
+        # server whose ordinary pages already contain the error string
+        # is judged by the same rule as one whose pages never do.
         logging.info(
             f"Baseline response: status {baseline.status_code}, "
             f"padding error text {'present' if baseline_has_error else 'absent'}."
@@ -174,6 +183,11 @@ def test_padding_oracle(url, ciphertext, parameter, error_message, block_size, u
                     logging.info(f"Block: {block_num}, Byte: {byte_index}, Value: {first_ok_value}, Result: Answers split at this position - Potential Padding Oracle")
                     found_oracle_byte = True
                     # Correct byte found, update current_block with correct padding
+                    # This write back is load bearing for the positions
+                    # still to come: each earlier byte starts from a
+                    # block that already carries the values accepted
+                    # for the later bytes, so the positions cannot be
+                    # tested in any other order or independently.
                     current_block = bytearray(current_block)
                     current_block[byte_index] = first_ok_value
                     current_block = bytes(current_block)
