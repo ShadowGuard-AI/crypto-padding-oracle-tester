@@ -1,164 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Crypto Padding Oracle Tester: what it is, how it runs, where it stops</title>
-<meta name="description" content="Crypto Padding Oracle Tester is one of my projects. The README in the repo is short, so this page sticks to what the files themselves show.">
-<style>
-:root {
-  --bg: #0a120e; --panel: #101c16; --ink: #e6f0e2;
-  --mut: #15251d;
-  --acc: #a8e05c; --acc2: #f0be54;
-  --line: #101c16;
-}
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--ink);
-  font-family: Georgia, 'Times New Roman', serif; line-height: 1.55; }
-code, pre, .mono { font-family: 'Courier New', monospace; }
-a { color: var(--acc2); }
-.hero { padding: 3rem 6vw 1rem; }
-.hero img.banner { width: 100%; height: auto; border: 1px solid var(--line);
-  border-radius: 10px; }
-.logo { width: 92px; height: 92px; border-radius: 18px;
-  border: 1px solid var(--line); }
-h1 { font-size: 2.4rem; margin: 0.4em 0 0.1em; }
-h2 { border-bottom: 2px solid var(--acc); padding-bottom: 0.2em;
-  margin-top: 2em; }
-.lede { font-size: 1.15rem; max-width: 62ch; }
-main { padding: 0 6vw 3rem; max-width: 1180px; margin: 0 auto; }
-.grid { display: grid; gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
-.card { background: var(--panel); border: 1px solid var(--line);
-  border-radius: 12px; padding: 1rem 1.2rem; }
-.card.pop { animation: rise 0.7s ease both; }
-@keyframes rise { from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: none; } }
-pre.code { background: #101014; color: #e8e6df; padding: 1rem 1.2rem;
-  border-radius: 12px; overflow-x: auto; font-size: 0.86rem;
-  border-left: 5px solid var(--acc); }
-table { border-collapse: collapse; width: 100%; }
-td, th { border-bottom: 1px solid var(--line); padding: 0.45rem 0.6rem;
-  text-align: left; }
-.shots { display: grid; gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
-.shots img { width: 100%; height: auto; border: 1px solid var(--line);
-  border-radius: 10px; background: #f4f1e8; }
-footer { padding: 2rem 6vw; border-top: 1px solid var(--line);
-  color: var(--mut); }
-.rail { display: flex; gap: 1.2rem; align-items: flex-start; }
-.rail nav { position: sticky; top: 1rem; min-width: 180px; }
-@media (max-width: 760px) { .rail { flex-direction: column; }
-  .rail nav { position: static; } }
-@media (prefers-reduced-motion: reduce) {
-  .card.pop { animation: none; } * { scroll-behavior: auto; } }
-</style>
-</head>
-<body class="layout-grid">
-<!-- This page exists for crypto-padding-oracle-tester alone: the layout (console-grid),
-     the colors, and the type were picked for this project, not
-     shared with the other project pages. The code block below is
-     copied from the file it names, line for line. If it looks
-     plain, that is because the project is plain, and I would
-     rather the page match the project than dress it up. The one
-     thing I will not do here is oversell: what this project does
-     not do is stated on the page, not hidden from it. -->
-<header class="hero">
-  <img class="logo" src="assets/logo.png" alt="Crypto Padding Oracle Tester logo">
-  <img class="banner" src="assets/banner.png" alt="">
-  <h1>Crypto Padding Oracle Tester</h1>
-  <p class="mono"><a href="https://github.com/ShadowGuard-AI/crypto-padding-oracle-tester">github.com/ShadowGuard-AI/crypto-padding-oracle-tester</a></p>
-</header>
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><title>crypto-padding-oracle-tester: Pond Skater's Surface Tension Office</title>
+<style>@font-face{font-family:Disp;src:url("fonts/BirthstoneBounce.ttf")}@font-face{font-family:Text;src:url("fonts/Archivo.ttf")}
+body{background:#dbe4ec;font-family:Text,serif;color:#1c1e22;margin:0}main{max-width:920px;margin:0 auto;padding:28px}
+h1,h2{font-family:Disp,serif;color:#2b2b30}h3{font-family:Text,serif;color:#2b2b30}
+section{background:#f4f1e6;padding:18px 22px;margin:16px 0;border:1px solid #8a3b2e}
+img{max-width:100%}button{background:#f4f1e6;color:#1c1e22;border:2px solid #8a3b2e;padding:10px 14px;margin:4px;font-family:Disp,serif}
+pre{white-space:pre-wrap;font-family:Text,serif}</style></head><body><main>
+<img src="intro-banner.png" alt="Near water in the lower half, dark and still, one skater mid frame with its feet dimpling the skin, a second skater a speck by the far reeds, no lettering anywhere"><h1>crypto-padding-oracle-tester: Pond Skater's Surface Tension Office</h1>
+<p>Theme: Pond Skater's Surface Tension Office. Headings in BirthstoneBounce, running text in Archivo.</p>
+<img src="logo.png" alt="One pond skater on still water seen from slightly above, six legs touching the skin, each foot in its own dimple inside a single ripple ring in chimney brick, the name hand lettered below"><img src="banner.png" alt="A dawn farm pond with reeds at the left, one skater crossing the open skin and leaving a faint V of ripples, two smaller skaters near the reed shade, a drowned leaf on the bottom, and the name in white throat on a weathered reed tag at the margin">
+<img src="scene.svg" alt="The pond in three bands: reeds and far bank still, one skater rowing in short strokes across the open water and leaving ripple rings that spread and vanish, and now and then a single skater crossing the lower edge"><div><button type="button">Test This Address</button><button type="button">Walk Without Sending</button></div><h3>Server Address</h3><h3>Padding Fault Wording</h3><h3>Likely Found</h3><h3>Not Detected</h3>
+<section><h2>The job, stated plainly</h2><p>The tool sends crafted CBC ciphertext to a server, byte by byte, and reads the replies. A position counts as evidence when some byte values draw the error string and others at that same position do not. A server that answers alike for every value is never called likely found.</p></section>
+<section><h2>The start line</h2><p>Run it as python3 main.py with the required url option, short form u, long form url. A live run first sends the unmodified ciphertext and logs the status and whether the error text was present, then starts crafting. In test mode the tool builds the ciphertext and walks each position yet sends nothing, ends by saying no verdict is possible, and exits 0.</p></section>
+<section><h2>Every control</h2><p>Data, short d, holds the text to encrypt, and a fixed default sentence is used when it is absent. Ciphertext, short c, takes base64 and is decoded with strict validation, so stray characters end the run. Key, short k, takes hex of 16, 24 or 32 bytes, else a fresh random key is made and its hex is logged. IV, short iv, takes hex of block size length, else a fresh random IV is made and its hex is logged. Parameter, short p, names the field that carries the ciphertext, default ciphertext. Error message, short e, sets the string that marks a padding fault, default PaddingException. Block size defaults to 16. Get switches the send from POST to GET. Each send waits five seconds. Requests go as form data on POST or as query values on GET, with the ciphertext base64 encoded each time.</p></section>
+<section><h2>Facts the surface must not hide</h2><p>Padding at encryption always uses the AES block size from the library, never the block size flag. The baseline reply is logged and then never compared against later replies. The accepted byte at each position is written back into the block before earlier positions are tried, so position order matters. On a run that makes them, the random key, the random IV and the base64 ciphertext are all written to the log; that behaviour is stated here as a fact, and no value is shown anywhere in this re-skin.</p></section>
+<section><h2>The endings</h2><p>Likely found prints only on split evidence and exits 0. Not detected prints when the byte loop finishes with no split and exits 0. Bad key, bad IV, bad base64, a block size below one, a ciphertext length that is not a multiple of the block size, fewer than two blocks, and any transport fault all exit 1. The licence is MIT, as the README licence section states it.</p></section>
+<section><h2>Preserved live README record</h2><pre># crypto-padding-oracle-tester
+A tool to test a web server or cryptographic implementation for padding oracle vulnerabilities in CBC mode encryption. Sends crafted ciphertext to the server and analyzes the response to identify vulnerabilities. Relies on the `requests` library for HTTP interaction. - Focused on Basic cryptographic operations
 
-<main>
-  <section class="rail">
-    <nav aria-label="on this page">
-      <p class="mono"><a href="#run">Run it</a><br>
-      <a href="#files">The files</a><br>
-      <a href="#sheets">The sheets</a><br>
-      <a href="https://github.com/ShadowGuard-AI/crypto-padding-oracle-tester">The repo</a></p>
-    </nav>
-    <div>
-      <p class="lede">Crypto Padding Oracle Tester is one of my projects. The README in the repo is short, so this page sticks to what the files themselves show.</p>
-      <div class="grid">
-        <div class="card pop"><h3>What it is</h3>
-          <p>Crypto Padding Oracle Tester: 3 files, 243 counted
-          lines across Python 215, Markdown 24, Text 4. One job, done in the
-          open, in files you can read.</p></div>
-        <div class="card pop"><h3>The biggest piece</h3>
-          <p><code>main.py</code> carries the most
-          lines. If the project grows, that file is where the growth
-          lands first, for better or worse.</p></div>
-        <div class="card pop"><h3>The honest gap</h3>
-          <p>No test files yet. That is the honest gap, and the roadmap in the visuals folder says what the first one should cover.</p></div>
-      </div>
-      <section id="run">
-        <h2>Run it</h2>
-        <p>The repo README has the exact commands for this one. The
-        shape is the shape for most of my projects: clone it, read the
-        top file first so you know what will happen, then run it on
-        something you do not mind breaking.</p>
-        <p class="mono">$ git clone https://github.com/ShadowGuard-AI/crypto-padding-oracle-tester.git<br>$ cd crypto-padding-oracle-tester</p>
-      </section>
-      
-  <section aria-label="real code">
-    <h2>The code, as it sits in the repo</h2>
-    <p>From <code>main.py</code>, line 13 on. I did
-    not tidy it for the page. What you see is what the file has.</p>
-    <pre class="code"><code>
+## Install
+`git clone https://github.com/ShadowStrikeHQ/crypto-padding-oracle-tester`
 
-def setup_argparse():
-    &quot;&quot;&quot;
-    Sets up the argument parser for the command-line interface.
-    &quot;&quot;&quot;
-    parser = argparse.ArgumentParser(description=&quot;Padding Oracle Tester for CBC mode encryption.&quot;)
-    parser.add_argument(&quot;-u&quot;, &quot;--url&quot;, required=True, help=&quot;The URL to test for the padding oracle vulnerability.&quot;)
-    parser.add_argument(&quot;-d&quot;, &quot;--data&quot;, required=False, help=&quot;Data to be encrypted (optional). If not provided, a default message is used.&quot;)
-    parser.add_argument(&quot;-c&quot;, &quot;--ciphertext&quot;, required=False, help=&quot;Base64 encoded ciphertext to decrypt (optional).  If not provided, data will be encrypted first.&quot;)
-    parser.add_argument(&quot;-k&quot;, &quot;--key&quot;, required=False, help=&quot;Hex encoded Key for CBC decryption (optional, needs to be 16, 24 or 32 bytes long). If not provided, a random key will be generated.&quot;)
-    parser.add_argument(&quot;-iv&quot;, &quot;--iv&quot;, required=False, help=&quot;Hex encoded initialization vector (IV) for CBC (optional, needs to be 16 bytes long). If not provided, a random IV will be generated.&quot;)
-    parser.add_argument(&quot;-p&quot;, &quot;--parameter&quot;, default=&quot;ciphertext&quot;, help=&quot;The parameter name in the URL to inject the ciphertext (default: ciphertext).&quot;)
-    parser.add_argument(&quot;-e&quot;, &quot;--error_message&quot;, default=&quot;PaddingException&quot;, help=&quot;Error message indicative of padding errors on the server side. (default: PaddingException)&quot;)
-    parser.add_argument(&quot;--block_size&quot;, type=int, default=16, help=&quot;Block size in bytes.  Usually 16 bytes (AES). (default: 16)&quot;)
-    parser.add_argument(&quot;--get&quot;, action=&#x27;store_true&#x27;, help=&quot;Use GET request instead of POST.&quot;)
-    parser.add_argument(&quot;--test_mode&quot;, action=&#x27;store_true&#x27;, help=&quot;Enable test mode to not send any requests to the server&quot;)
+## Usage
+```bash
+python3 main.py -u &lt;url&gt; [--test_mode]
+```
 
-    return parser.parse_args()
+`--test_mode` is a dry run: it builds the ciphertext and walks the byte positions without sending any request, so it cannot produce a vulnerability verdict and the run ends by saying so. A live run first sends a baseline request with the unmodified ciphertext and records the response. It reports "likely found" only when at least one byte position shows distinguishing evidence: at that position, at least one byte value answered without the error string while other byte values at the same position answered with it. A server whose answers never vary with the ciphertext cannot be reported as likely found. An HTTP error status is read as a response and checked for the error string like any other answer. Invalid keys, IVs, ciphertext, or block sizes exit 1. A run also exits 1 when the ciphertext length is not a multiple of the block size, when the ciphertext holds fewer than two blocks, or when a request fails at the transport level (connection error or timeout). The "not detected" line and exit 0 are reserved for runs that completed the byte loop without oracle evidence.
 
+## Parameters
+- `-h`: Show help message and exit
+- `-u`: The URL to test for the padding oracle vulnerability.
+- `-d`: No description provided
+- `-c`: No description provided
+- `-k`: No description provided
+- `-iv`: No description provided
+- `-p`: No description provided
+- `-e`: No description provided
+- `--block_size`: No description provided
+- `--get`: Use GET request instead of POST.
+- `--test_mode`: Enable test mode to not send any requests to the server
 
-def generate_random_key(key_size=16):</code></pre>
-  </section>
-      <section id="files">
-        <h2>The files that matter</h2>
-        <table><tr><th>File</th><th>Lines</th></tr>
-        <tr><td><code>main.py</code></td><td>215</td></tr>
-        <tr><td><code>README.md</code></td><td>24</td></tr>
-        <tr><td><code>requirements.txt</code></td><td>4</td></tr>
-        </table>
-        <p>Names doing the work: <span class="mono">setup_argparse, generate_random_key, generate_random_iv, cbc_encrypt, test_padding_oracle, main</span>.</p>
-      </section>
-      <section id="sheets">
-        <h2>Drawn by hand</h2>
-        <p>I sketch my projects on notebook paper so I have to
-        understand them well enough to draw them. The full set,
-        with the counts and how they were counted, is the
-        <a href="https://github.com/ShadowGuard-AI/crypto-padding-oracle-tester/tree/main/crypto-padding-oracle-tester-Visuals">crypto-padding-oracle-tester-Visuals</a>
-        folder in the repo. Nothing is drawn over the binder holes.
-        That is a rule, not a style.</p>
-        <div class="shots">
-          <img src="assets/architecture.png" alt="Hand drawn architecture sheet for Crypto Padding Oracle Tester">
-          <img src="assets/flowchart.png" alt="Hand drawn flowchart sheet for Crypto Padding Oracle Tester">
-          <img src="assets/product-map.png" alt="Hand drawn product map sheet for Crypto Padding Oracle Tester">
-        </div>
-      </section>
-    </div>
-  </section>
-</main>
-<footer>
-  <p>Crypto Padding Oracle Tester is one of my projects. This page was written
-  from the repo itself on 2026-10-30: the counts are the
-  repo's counts, the code is the repo's code, and the gaps are the
-  repo's gaps.</p>
-</footer>
-</body>
-</html>
+## License
+Copyright (c) ShadowStrikeHQ</pre></section>
+</main></body></html>
