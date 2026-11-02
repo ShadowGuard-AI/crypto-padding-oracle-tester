@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" role="img" aria-label="pond scene">
+<rect width="1200" height="300" fill="#33506e"/>
+<rect x="0" y="0" width="1200" height="70" fill="#5c7050"/>
+<g stroke="#425c3a" stroke-width="5"><line x1="30" y1="70" x2="24" y2="8"/><line x1="62" y1="70" x2="66" y2="2"/><line x1="94" y1="70" x2="88" y2="14"/><line x1="1120" y1="70" x2="1126" y2="6"/><line x1="1152" y1="70" x2="1146" y2="16"/></g>
+<rect x="0" y="70" width="1200" height="230" fill="#33506e"/>
+<g><animateTransform attributeName="transform" type="translate" values="0 0;120 0;120 0;260 0;260 0;0 0" keyTimes="0;0.3;0.5;0.8;0.9;1" dur="26s" repeatCount="indefinite"/>
+<ellipse cx="300" cy="170" rx="34" ry="13" fill="#2b2b30"/><g stroke="#f4f1e6" stroke-width="2"><line x1="272" y1="160" x2="238" y2="150"/><line x1="272" y1="180" x2="238" y2="192"/><line x1="328" y1="160" x2="362" y2="150"/><line x1="328" y1="180" x2="362" y2="192"/></g>
+<ellipse cx="300" cy="170" rx="52" ry="20" fill="none" stroke="#8a3b2e" stroke-width="2"><animate attributeName="rx" values="40;86" dur="26s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.9;0" dur="26s" repeatCount="indefinite"/></ellipse></g>
+<g><animateTransform attributeName="transform" type="translate" values="-180 0;1380 0" dur="44s" repeatCount="indefinite"/>
+<ellipse cx="60" cy="272" rx="20" ry="8" fill="#2b2b30"/><ellipse cx="60" cy="272" rx="32" ry="12" fill="none" stroke="#8a3b2e" stroke-width="2"/></g>
+</svg>
